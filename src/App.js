@@ -1,24 +1,41 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import FoodBox from './components/FoodBox';
+import foods from './foods.json';
+import { Row } from 'antd';
+import AddFoodForm from './components/AddFoodForm';
+import SearchBar from './components/SearchBar';
+
+
 
 function App() {
+    const [foodsArray, setFoodsArray] = useState(foods);
+    const [query, setQuery] = useState('');
+
+const handleSubmit = (food) => {
+  setFoodsArray([food, ...foodsArray]);
+};
+
+const handleSearch = (query) => {
+ setQuery(query.toLowerCase().trim());
+};
+
+const handleDelete = (name) => {
+  setFoodsArray(foodsArray.filter((f) => f.name !== name));
+};
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+   <div className="container">
+   <AddFoodForm onSubmit={handleSubmit} />
+   <SearchBar onChange={handleSearch} />
+    <Row>
+        {foodsArray.map((food) => 
+          !query || food.name.toLowerCase().includes(query) ? (
+            <FoodBox food={food} onDelete={handleDelete}/>
+          ) : null            
+        )}
+    </Row>
+   </div>
   );
 }
 
